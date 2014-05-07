@@ -44,7 +44,7 @@ var y = d3.scale.linear()
 
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("top");
+    .orient("bottom");
 
 var area = d3.svg.area()
     .x(function(d) { return x(d.timestamp); })

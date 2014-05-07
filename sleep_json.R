@@ -22,7 +22,6 @@ read_reporter_csv <- function(filename){
                       "weather","photos","decible_level","audio_desc","steps",
                       "people","learn","activity","sleep","working","coffees",
                       "location","alcohol","stress","drugs")
-  print(head(y))
   y[y$stress == '',]$stress <- "Nothing!"
   y[y$people == '',]$people <- "Alone"
   y$timestamp     <- as.POSIXct(gsub("T"," ",
@@ -84,7 +83,8 @@ metadata <- read_sleep_csv(import.csv)
 
 #reads reporter csv
 reporter <- read_reporter_csv(import.reporter)
-
+reporter$drugs <- NULL
+reporter_clean <- gsub("blow","",reporter$activity)
 #imports list of json files
 import.list <- lapply(paste(long_loc,f,sep = ""), read_json)
 

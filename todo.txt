@@ -1,0 +1,38 @@
+COMPLETED for Project
+---------------------
+- Load data from reporter
+- Load csv from sleep cycle
+- Parse json from sleep cycle
+- Scrape sleep data from sleep cycle
+- Integrate data between sleep cycle and reporter
+- Clean and organize data
+- Fix timestamps
+- Calculate sleep times in raw seconds since sleep
+- Calculate sleep times in time of sleep
+- Create investigative graphs in R
+  - Beautify R graphs
+- Create basic d3 graphs
+
+
+TODOS for Project
+---------------------
+- color d3 small multiples based on wakeup happiness
+- rollover on small multiples graph shows:
+  - time asleep
+  - sleep quality
+  - day of week
+- second d3 group graph
+- reorder d3 small multiples/color group graph based on subtypes (with buttons):
+  - alcohol use
+  - stress
+  - ennui
+  - workout
+  - coffee
+  - who i saw
+  - average daily decible level
+
+
+LONG TERM:
+- fully automate data scraping from sleep cycle site
+- fully automate data load from reporter email
+
