@@ -25,18 +25,22 @@ read_reporter_csv <- function(filename){
   print(head(y))
   y[y$stress == '',]$stress <- "Nothing!"
   y[y$people == '',]$people <- "Alone"
+  y$timestamp     <- as.POSIXct(gsub("T"," ",
+                            y$GMT_timestamp),
+                            tz = "UTC")
+  attr(y$timestamp, "tzone") <- "America/New_York"
   return(y)
 }
 
 #function to read in a csv file
 read_sleep_csv <- function(filename){
     x <- read.csv("sleepdata.csv",sep = ";")
-    x$ate_late <- grepl("Ate late",x$Sleep.Notes)
-    x$drank_coffee <- grepl("Drank coffee",x$Sleep.Notes)
+    x$ate_late      <- grepl("Ate late",x$Sleep.Notes)
+    x$drank_coffee  <- grepl("Drank coffee",x$Sleep.Notes)
     x$stressful_day <- grepl("Stressful day",x$Sleep.Notes)
-    x$worked_out <- grepl("Worked out",x$Sleep.Notes)
-    x$start_date <- as.POSIXct(gsub("T"," ",x$Start))
-    x$happy <- x$Wake.up == ":)"
+    x$worked_out    <- grepl("Worked out",x$Sleep.Notes)
+    x$start_date    <- as.POSIXct(gsub("T"," ",x$Start))
+    x$happy         <- x$Wake.up == ":)"
     return(x)
 }
 
