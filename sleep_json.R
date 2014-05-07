@@ -109,15 +109,17 @@ ggplot(merged_lists,
       facet_grid(stressful_day ~  worked_out)
 
 
-ggplot(merged_lists,aes(secs_since_sleep,X2)) + geom_line() + facet_grid(graph_date~.)
+ggplot(merged_lists,aes(secs_since_sleep,X2)) +
+       geom_line() +
+       facet_grid(graph_date ~ .)
 
 ggplot(merged_lists,aes(hour_and_min,X2,group = graph_date, colour = )) + geom_line() + 
     facet_grid(hour ~ .)
 
 ggplot(merged_lists,aes(hour_and_min,X2,group = graph_date,
-                        colour = happy)) + geom_point() +
+                        colour = happy)) + geom_line(alpha = .6) +
                         facet_grid(hour ~ .) +
-                        theme_solarized(light = FALSE) +
+                        theme_solarized(light = TRUE) +
                         scale_colour_solarized("red") +
                         geom_vline(x = 8)
 
@@ -135,5 +137,16 @@ hours_of_sleep <- ggplot(merged_lists,aes(secs_since_sleep/(60*60),X2,group = gr
                         scale_colour_solarized("red") +
                         geom_vline(x = 8)
 
+
 print(sleep_by_hour)
 print(hours_of_sleep)
+
+
+simple_graph_output <- data.frame(merged_lists$hour_and_min,
+                                  merged_lists$X2,
+                                  merged_lists$graph_date)
+
+colnames(simple_graph_output) <- c("timestamp","sleep","the_day")
+write.csv(simple_graph_output,"simple_sleep_output.csv",row.names = FALSE)
+
+

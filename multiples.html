@@ -14,9 +14,19 @@ body {
 }
 
 .area {
-  fill: #e7e7e7;
+  fill: lightsteelblue;
 }
 
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
 </style>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -26,45 +36,47 @@ var margin = {top: 8, right: 10, bottom: 2, left: 10},
     width = 960 - margin.left - margin.right,
     height = 69 - margin.top - margin.bottom;
 
-var parseDate = d3.time.format("%b %Y").parse;
-
-var x = d3.time.scale()
+var x = d3.scale.linear()
     .range([0, width]);
 
 var y = d3.scale.linear()
     .range([height, 0]);
 
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("top");
+
 var area = d3.svg.area()
-    .x(function(d) { return x(d.date); })
+    .x(function(d) { return x(d.timestamp); })
     .y0(height)
-    .y1(function(d) { return y(d.price); });
+    .y1(function(d) { return y(d.sleep); });
 
 var line = d3.svg.line()
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.price); });
+    .x(function(d) { return x(d.timestamp); })
+    .y(function(d) { return y(d.sleep); });
 
-d3.csv("stocks.csv", type, function(error, data) {
+d3.csv("simple_sleep_output.csv", type, function(error, data) {
 
-  // Nest data by symbol.
-  var symbols = d3.nest()
-      .key(function(d) { return d.symbol; })
+  // Nest data by the_day.
+  var the_days = d3.nest()
+      .key(function(d) { return d.the_day; })
       .entries(data);
 
-  // Compute the maximum price per symbol, needed for the y-domain.
-  symbols.forEach(function(s) {
-    s.maxPrice = d3.max(s.values, function(d) { return d.price; });
+  // Compute the maximum sleep per the_day, needed for the y-domain.
+  the_days.forEach(function(s) {
+    s.maxPrice = d3.max(s.values, function(d) { return d.sleep; });
   });
 
-  // Compute the minimum and maximum date across symbols.
-  // We assume values are sorted by date.
+  // Compute the minimum and maximum timestamp across the_days.
+  // We assume values are sorted by timestamp.
   x.domain([
-    d3.min(symbols, function(s) { return s.values[0].date; }),
-    d3.max(symbols, function(s) { return s.values[s.values.length - 1].date; })
+    d3.min(the_days, function(s) { return s.values[0].timestamp; }),
+    d3.max(the_days, function(s) { return s.values[s.values.length - 1].timestamp; })
   ]);
 
-  // Add an SVG element for each symbol, with the desired dimensions and margin.
+  // Add an SVG element for each the_day, with the desired dimensions and margin.
   var svg = d3.select("body").selectAll("svg")
-      .data(symbols)
+      .data(the_days)
     .enter().append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -81,7 +93,13 @@ d3.csv("stocks.csv", type, function(error, data) {
       .attr("class", "line")
       .attr("d", function(d) { y.domain([0, d.maxPrice]); return line(d.values); });
 
-  // Add a small label for the symbol name.
+  // Add an x axis
+  svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+  // Add a small label for the the_day name.
   svg.append("text")
       .attr("x", width - 6)
       .attr("y", height - 6)
@@ -90,8 +108,8 @@ d3.csv("stocks.csv", type, function(error, data) {
 });
 
 function type(d) {
-  d.price = +d.price;
-  d.date = parseDate(d.date);
+  d.sleep = +d.sleep;
+  d.timestamp = +d.timestamp;
   return d;
 }
 
