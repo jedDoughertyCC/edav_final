@@ -130,3 +130,6 @@ hours_of_sleep <- ggplot(merged_lists,aes(secs_since_sleep/(60*60),X2,group = gr
                         theme_solarized(light = FALSE) +
                         scale_colour_solarized("red") +
                         geom_vline(x = 8)
+
+print(sleep_by_hour)
+print(hours_of_sleep)
