@@ -72,8 +72,7 @@ read_json <- function(filename){
     one_day$hour <- hour(one_day$start_date)
     one_day$hour_text <- paste(sort(unique(one_day$hour)),
                                " o'clock",sep = "")
-    print(nrow(one_day))
-    one_day
+    return(one_day)
 }
 
 
@@ -134,8 +133,7 @@ hours_of_sleep <- ggplot(merged_lists,aes(secs_since_sleep/(60*60),X2,group = gr
                         colour = happy)) + geom_line(size = 1.0,alpha = .7) +
                         facet_grid(hours_of_sleep ~ .) +
                         theme_solarized(light = FALSE) +
-                        scale_colour_solarized("red") +
-                        geom_vline(x = 8)
+                        scale_colour_solarized("red")
 
 
 print(sleep_by_hour)
