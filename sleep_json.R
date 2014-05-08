@@ -147,4 +147,3 @@ simple_graph_output <- data.frame(merged_lists$hour_and_min,
 colnames(simple_graph_output) <- c("timestamp","sleep","the_day")
 write.csv(simple_graph_output,"simple_sleep_output.csv",row.names = FALSE)
 
-
