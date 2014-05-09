@@ -74,8 +74,6 @@ read_json <- function(filename){
     return(one_day)
 }
 
-
-
 ##sets up import for each file
 
 #reads sleep csv
@@ -105,7 +103,7 @@ ggplot(merged_lists,
       # geom_point(aes(alpha = duration/(60*60*9)))
       geom_line(aes(group = graph_date,colour = Wake.up,alpha = duration/(60*60*20))) +
       # geom_smooth() +
-      facet_grid(stressful_day ~  worked_out)
+      facet_grid(stressful_day ~ worked_out)
 
 
 ggplot(merged_lists,aes(secs_since_sleep,X2)) +
@@ -135,10 +133,8 @@ hours_of_sleep <- ggplot(merged_lists,aes(secs_since_sleep/(60*60),X2,group = gr
                         theme_solarized(light = FALSE) +
                         scale_colour_solarized("red")
 
-
 print(sleep_by_hour)
 print(hours_of_sleep)
-
 
 simple_graph_output <- data.frame(merged_lists$hour_and_min,
                                   merged_lists$X2,
@@ -147,3 +143,11 @@ simple_graph_output <- data.frame(merged_lists$hour_and_min,
 colnames(simple_graph_output) <- c("timestamp","sleep","the_day")
 write.csv(simple_graph_output,"simple_sleep_output.csv",row.names = FALSE)
 
+layer_graph_output <- data.frame(merged_lists$graph_date,
+                                  merged_lists$hour_and_min,
+                                  merged_lists$X2)
+
+colnames(layer_graph_output) <- c("the_day","reading","level")
+
+layer_form <- dcast(layer_graph_output,the_day  ~ reading,function(x){as.character(min(x))},fill="")
+write.csv(layer_form,"layer_output.csv",row.names = FALSE)

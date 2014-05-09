@@ -3,11 +3,11 @@ var regions = { "SAS": "South Asia" , "ECS": "Europe and Central Asia", "MEA": "
 	h = 550,
 	margin = 30,
 	startYear = 1960,
-	endYear = 2010,
-	startAge = 20,
-	endAge = 80,
+	endYear = 2610,
+	startAge = 0,
+	endAge = 100,
 	y = d3.scale.linear().domain([endAge, startAge]).range([0 + margin, h - margin]),
-	x = d3.scale.linear().domain([1960, 2009]).range([0 + margin -5, w]),
+	x = d3.scale.linear().domain([1960, 2609]).range([0 + margin -5, w]),
 	years = d3.range(startYear, endYear);
 
 var vis = d3.select("#vis")
@@ -34,7 +34,7 @@ d3.text('country-regions.csv', 'text/csv', function(text) {
 
 var startEnd = {},
     countryCodes = {};
-d3.text('.csv', 'text/csv', function(text) {
+d3.text('layer_output.csv', 'text/csv', function(text) {
     var countries = d3.csv.parseRows(text);
 
     for (i=1; i < countries.length; i++) {
