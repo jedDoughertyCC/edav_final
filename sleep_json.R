@@ -2,6 +2,7 @@ library(RJSONIO)
 library(scales)
 library(lubridate)
 library(ggthemes)
+library(reshape2)
 #Locations to pull files from
 long_loc <- "~/edav_final/sleepdays/"
 import.csv <- "~/edav_final/sleepdata.csv"
@@ -82,7 +83,6 @@ metadata <- read_sleep_csv(import.csv)
 #reads reporter csv
 reporter <- read_reporter_csv(import.reporter)
 reporter$drugs <- NULL
-reporter_clean <- gsub("blow","",reporter$activity)
 #imports list of json files
 import.list <- lapply(paste(long_loc,f,sep = ""), read_json)
 
@@ -149,5 +149,8 @@ layer_graph_output <- data.frame(merged_lists$graph_date,
 
 colnames(layer_graph_output) <- c("the_day","reading","level")
 
-layer_form <- dcast(layer_graph_output,the_day  ~ reading,function(x){as.character(min(x))},fill="")
+layer_form <- dcast(layer_graph_output,the_day ~ reading,function(x){as.character(min(x))},fill="")
+layer_form$night_id <- row.names(layer_form)
 write.csv(layer_form,"layer_output.csv",row.names = FALSE)
+
+
