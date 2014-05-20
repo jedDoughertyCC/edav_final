@@ -7,7 +7,7 @@ body {
     font-family: 'Cardo', serif;
 }
 h1 {
-    font-family: 'Bevan', serif;
+    font-family: 'Menlo', serif;
     font-size: 3.0em;
 }
 h2 {
@@ -36,12 +36,12 @@ a { color: #821122; }
 #filters a:last-child {
     margin-right: 0;
 }
-#filters a.SAS { background: #895881; color: #fff; }
-#filters a.ECS { background: #ED7C31; color: #fff; }
-#filters a.MEA { background: #82A5C0; color: #fff; }
-#filters a.SSF { background: #6E9E75; color: #fff; }
-#filters a.LCN { background: #00BBD6; color: #fff; }
-#filters a.EAS { background: #e25f82; color: #fff; }
+#filters a.nodrinkhappy { background: #968525; color: #fff; }
+#filters a.smalldrinkhappy { background: #964e25; color: #fff; }
+#filters a.muchdrinkhappy { background: #962547; color: #fff; }
+#filters a.nodrinksad { background: #253e96; color: #fff; }
+#filters a.smalldrinksad { background: #25968d; color: #fff; }
+#filters a.muchdrinksad { background: #6E9E75; color: #fff; }
 #filters a.NAC { background: #be1932; color: #fff; }
 
 #vis {
@@ -55,21 +55,21 @@ a { color: #821122; }
 
 path {
     stroke: #e2e2e2;
-    stroke-width: 0.9;
+    stroke-width: 1.1;
 	fill: none;
 }
 path.current, path.highlight.current {
     stroke: #000;
-    stroke-width: 1.7;
+    stroke-width: 2.3;
 }
-.SAS.highlight { stroke: #895881; }
-.ECS.highlight { stroke: #ED7C31; }
-.MEA.highlight { stroke: #82A5C0; }
-.SSF.highlight { stroke: #6E9E75; }
-.LCN.highlight { stroke: #00BBD6; }
-.EAS.highlight { stroke: #e25f82; }
+.nodrinkhappy.highlight { stroke: #968525; }
+.smalldrinkhappy.highlight { stroke: #964e25; }
+.muchdrinkhappy.highlight { stroke: #962547; }
+.nodrinksad.highlight { stroke: #253e96; }
+.smalldrinksad.highlight { stroke: #25968d; }
+.muchdrinksad.highlight { stroke: #6E9E75; }
 .NAC.highlight { stroke: #be1932; }
-.highlight { stroke-width: 1px; }
+.highlight { stroke-width: 1.5px; }
 
 line {
     stroke: black;

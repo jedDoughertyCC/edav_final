@@ -10,34 +10,21 @@
 	<script type="text/javascript" src="http://media.flowingdata.com/js/d3.csv.js?1.29.1"></script>
 
 	<link href='http://fonts.googleapis.com/css?family=Bevan|Cardo' rel='stylesheet' type='text/css'>
-    <script type="text/javascript">
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-865100-8']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
-    </script>
   </head>
 <body>
 <div id="main-wrapper">
     <div id="content">
-        <div style="text-align:right"><a href="http://flowingdata.com"><img src="./logo-lone-square.gif" title="FlowingData" width="50" height="50" / ></a></div>
         <h1>Sleep Per Night</h1>
-        <p>I tracked my sleep depth every night for 2 months. Roll over the graph to see a specific night or click a filter to highlight those nights.</p>
+        <p>I tracked my sleep depth every night for 2 months.
+        Roll over the graph to see a specific night or click a filter to highlight those nights.</p>
 
         <div id="filters">
-            <a id="EAS">Drank Alcohol Prior</a>
-            <a id="SAS">Weekend</a>
-            <a id="ECS">Weekday</a>
-            <a id="MEA">Woke up happy</a>
-            <a id="SSF">Worked Out</a>
-            <a id="LCN">Stressful Day</a>
+            <a id="nodrinkhappy">No Prior Booze, Happy</a>
+            <a id="smalldrinkhappy">A Little Booze, Happy</a>
+            <a id="muchdrinkhappy">Tons of Booze, Happy</a>
+            <a id="nodrinksad">No Prior Booze, Sad</a>
+            <a id="smalldrinksad">A Little Booze, Sad</a>
+            <a id="muchdrinksad">Tons of Booze, Sad</a>
             <a id="NAC">Saw a Girl</a>
         </div><!-- @end #filters -->
 

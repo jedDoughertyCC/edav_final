@@ -3,6 +3,7 @@ library(scales)
 library(lubridate)
 library(ggthemes)
 library(reshape2)
+library(sqldf)
 #Locations to pull files from
 long_loc <- "~/edav_final/sleepdays/"
 import.csv <- "~/edav_final/sleepdata.csv"
@@ -72,10 +73,11 @@ read_json <- function(filename){
     one_day$hour <- hour(one_day$start_date)
     one_day$hour_text <- paste(sort(unique(one_day$hour)),
                                " o'clock",sep = "")
+    one_day <- one_day[one_day$hours_of_sleep > 2,]
     return(one_day)
 }
-
 ##sets up import for each file
+
 
 #reads sleep csv
 metadata <- read_sleep_csv(import.csv)
@@ -83,6 +85,7 @@ metadata <- read_sleep_csv(import.csv)
 #reads reporter csv
 reporter <- read_reporter_csv(import.reporter)
 reporter$drugs <- NULL
+
 #imports list of json files
 import.list <- lapply(paste(long_loc,f,sep = ""), read_json)
 
@@ -97,44 +100,54 @@ filtered_list <- full_list[full_list$graph_date != "Wednesday 19-20 Mar, 2014",]
 
 merged_lists <- merge(filtered_list,metadata, by = "start_date")
 
-#Grapical output of sleep days
-ggplot(merged_lists,
-      aes(secs_since_sleep/(60*60),X2)) +
-      # geom_point(aes(alpha = duration/(60*60*9)))
-      geom_line(aes(group = graph_date,colour = Wake.up,alpha = duration/(60*60*20))) +
-      # geom_smooth() +
-      facet_grid(stressful_day ~ worked_out)
+#give the reporter data the id of the following sleep day
+x <- unique(merged_lists[,c("start_date","happy")])
 
+x$id <- paste("night",1:nrow(x),sep ="")
+ 
+names(x) <- c("day","happy","id")
 
-ggplot(merged_lists,aes(secs_since_sleep,X2)) +
-       geom_line() +
-       facet_grid(graph_date ~ .)
+reporter$id <- "no_night"
 
-ggplot(merged_lists,aes(hour_and_min,X2,group = graph_date, colour = )) + geom_line() + 
-    facet_grid(hour ~ .)
+for(i in 1:nrow(reporter)){
+  for(j in 1:nrow(x)){
+    if(reporter[i,]$timestamp <= x[j,]$day &
+       reporter[i,]$timestamp > x[j,]$day - 60*60*24){
+          reporter[i,]$id <- x[j,]$id
+    }
+  }
+}
 
-ggplot(merged_lists,aes(hour_and_min,X2,group = graph_date,
-                        colour = happy)) + geom_line(alpha = .6) +
-                        facet_grid(hour ~ .) +
-                        theme_solarized(light = TRUE) +
-                        scale_colour_solarized("red") +
-                        geom_vline(x = 8)
+#queries reporter info to get information for each night of sleep
+r_and_m <- sqldf("
+select x.id sleep_id,
+sum(CASE WHEN
+    (activity LIKE '%Drinking%' OR
+     activity LIKE '%Coke%' OR
+     activity LIKE '%shrooms%' OR
+     activity LIKE '%molly%')
+    THEN 1
+    ELSE 0 END) drinking,
+happy
+from x
+left outer join reporter on
+x.id = reporter.id
+group by sleep_id
+order by sleep_id
+;", drv = "SQLite")
 
-sleep_by_hour <- ggplot(merged_lists,aes(hour_and_min,X2,group = graph_date,
-                        colour = happy)) + geom_line(size = 1.0,alpha = .7) +
-                        facet_grid(hour ~ .) +
-                        theme_solarized(light = FALSE) +
-                        scale_colour_solarized("red") +
-                        geom_vline(x = 8)
-
-hours_of_sleep <- ggplot(merged_lists,aes(secs_since_sleep/(60*60),X2,group = graph_date,
-                        colour = happy)) + geom_line(size = 1.0,alpha = .7) +
-                        facet_grid(hours_of_sleep ~ .) +
-                        theme_solarized(light = FALSE) +
-                        scale_colour_solarized("red")
-
-print(sleep_by_hour)
-print(hours_of_sleep)
+r_and_m[r_and_m$drinking == "1" &
+        r_and_m$happy == FALSE,]$drinking <- "smalldrinksad"
+r_and_m[r_and_m$drinking == "1" &
+        r_and_m$happy == TRUE,]$drinking  <- "smalldrinkhappy"
+r_and_m[r_and_m$drinking == "2" &
+        r_and_m$happy == FALSE,]$drinking <- "muchdrinksad"
+r_and_m[r_and_m$drinking == "2" &
+        r_and_m$happy == TRUE,]$drinking  <- "muchdrinkhappy"
+r_and_m[r_and_m$drinking == "0" &
+        r_and_m$happy == FALSE,]$drinking <- "nodrinksad"
+r_and_m[r_and_m$drinking == "0" &
+        r_and_m$happy == TRUE,]$drinking  <- "nodrinkhappy"
 
 simple_graph_output <- data.frame(merged_lists$hour_and_min,
                                   merged_lists$X2,
@@ -142,15 +155,21 @@ simple_graph_output <- data.frame(merged_lists$hour_and_min,
 
 colnames(simple_graph_output) <- c("timestamp","sleep","the_day")
 write.csv(simple_graph_output,"simple_sleep_output.csv",row.names = FALSE)
+a<- seq(3000,1,by = -100)
+b<-101 # Or some other number
+a<-sapply(a, function (x) rep(x,b))
+a<-as.vector(a)
+
 
 layer_graph_output <- data.frame(merged_lists$graph_date,
                                   merged_lists$hour_and_min,
-                                  merged_lists$X2)
+                                  merged_lists$X2 + a)
 
 colnames(layer_graph_output) <- c("the_day","reading","level")
 
 layer_form <- dcast(layer_graph_output,the_day ~ reading,function(x){as.character(min(x))},fill="")
-layer_form$night_id <- row.names(layer_form)
+sleep_id <- paste("night",1:nrow(layer_form),sep = "")
+layer_form <- cbind(sleep_id, layer_form)
+
 write.csv(layer_form,"layer_output.csv",row.names = FALSE)
-
-
+write.csv(r_and_m,"sleep_days.csv",row.names = FALSE)

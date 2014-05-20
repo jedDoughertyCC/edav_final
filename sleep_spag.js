@@ -1,11 +1,11 @@
-var regions = { "SAS": "South Asia" , "ECS": "Europe and Central Asia", "MEA": "Middle East & North Africa", "SSF": "Sub-Saharan Africa", "LCN": "Latin America & Caribbean", "EAS": "East Asia &amp; Pacific", "NAC": "North America" },
+var regions = { "nodrinkhappy": "No Drinks Woke up Happy" , "smalldrinkhappy": "Had Drinks Woke up happy", "muchdrinkhappy": "Lots of Drinks Woke up happy", "nodrinksad": "No drinks Woke up sad", "smalldrinksad": "Small drinks Woke up sad", "muchdrinksad": "Many Drinks Woke up sad", "NAC": "North America" },
 	w = 925,
 	h = 550,
 	margin = 30,
 	startYear = 1960,
 	endYear = 2610,
-	startAge = 0,
-	endAge = 100,
+	startAge = 100,
+	endAge = 3000,
 	y = d3.scale.linear().domain([endAge, startAge]).range([0 + margin, h - margin]),
 	x = d3.scale.linear().domain([1960, 2609]).range([0 + margin -5, w]),
 	years = d3.range(startYear, endYear);
@@ -17,7 +17,6 @@ var vis = d3.select("#vis")
     .append("svg:g")
     // .attr("transform", "translate(0, 600)");
 
-
 var line = d3.svg.line()
     .x(function(d,i) { return x(d.x); })
     .y(function(d) { return y(d.y); });
@@ -25,12 +24,13 @@ var line = d3.svg.line()
 
 // Regions
 var countries_regions = {};
-d3.text('country-regions.csv', 'text/csv', function(text) {
+d3.text('sleep_days.csv', 'text/csv', function(text) {
     var regions = d3.csv.parseRows(text);
     for (i=1; i < regions.length; i++) {
         countries_regions[regions[i][0]] = regions[i][1];
     }
 });
+
 
 var startEnd = {},
     countryCodes = {};
@@ -40,7 +40,7 @@ d3.text('layer_output.csv', 'text/csv', function(text) {
     for (i=1; i < countries.length; i++) {
         var values = countries[i].slice(2, countries[i.length-1]);
         var currData = [];
-        countryCodes[countries[i][1]] = countries[i][0];
+        countryCodes[countries[i][0]] = countries[i][1];
 
         var started = false;
         for (j=0; j < values.length; j++) {
@@ -48,19 +48,19 @@ d3.text('layer_output.csv', 'text/csv', function(text) {
                 currData.push({ x: years[j], y: values[j] });
 
                 if (!started) {
-                    startEnd[countries[i][1]] = { 'startYear':years[j], 'startVal':values[j] };
+                    startEnd[countries[i][0]] = { 'startYear':years[j], 'startVal':values[j] };
                     started = true;
                 } else if (j == values.length-1) {
-                    startEnd[countries[i][1]]['endYear'] = years[j];
-                    startEnd[countries[i][1]]['endVal'] = values[j];
+                    startEnd[countries[i][0]]['endYear'] = years[j];
+                    startEnd[countries[i][0]]['endVal'] = values[j];
                 }
 
             }
         }
         vis.append("svg:path")
             .data([currData])
-            .attr("country", countries[i][1])
-            .attr("class", countries_regions[countries[i][1]])
+            .attr("country", countries[i][0])
+            .attr("class", countries_regions[countries[i][0]])
             .attr("d", line)
             .on("mouseover", onmouseover)
             .on("mouseout", onmouseout);
@@ -95,10 +95,10 @@ vis.selectAll(".yLabel")
     .enter().append("svg:text")
     .attr("class", "yLabel")
     .text(String)
-	.attr("x", 0)
-	.attr("y", function(d) { return y(d) })
-	.attr("text-anchor", "right")
-	.attr("dy", 3)
+    .attr("x", 0)
+    .attr("y", function(d) { return y(d) })
+    .attr("text-anchor", "right")
+    .attr("dy", 3)
 
 vis.selectAll(".xTicks")
     .data(x.ticks(5))
@@ -148,6 +148,7 @@ function onmouseover(d, i) {
     $("#default-blurb").hide();
     $("#blurb-content").html(blurb);
 }
+
 function onmouseout(d, i) {
     var currClass = d3.select(this).attr("class");
     var prevClass = currClass.substring(0, currClass.length-8);
