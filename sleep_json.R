@@ -122,10 +122,7 @@ for(i in 1:nrow(reporter)){
 r_and_m <- sqldf("
 select x.id sleep_id,
 sum(CASE WHEN
-    (activity LIKE '%Drinking%' OR
-     activity LIKE '%Coke%' OR
-     activity LIKE '%shrooms%' OR
-     activity LIKE '%molly%')
+    (activity LIKE '%Drinking%')
     THEN 1
     ELSE 0 END) drinking,
 happy
@@ -155,21 +152,28 @@ simple_graph_output <- data.frame(merged_lists$hour_and_min,
 
 colnames(simple_graph_output) <- c("timestamp","sleep","the_day")
 write.csv(simple_graph_output,"simple_sleep_output.csv",row.names = FALSE)
-a<- seq(3000,1,by = -100)
-b<-101 # Or some other number
+
+
+a<- seq(nrow(simple_graph_output)/1.01,1,by = -100)
+b<-101 # readings per night
 a<-sapply(a, function (x) rep(x,b))
 a<-as.vector(a)
-
 
 layer_graph_output <- data.frame(merged_lists$graph_date,
                                   merged_lists$hour_and_min,
                                   merged_lists$X2 + a)
+no_stack_output <- data.frame(merged_lists$graph_date,
+                                  merged_lists$hour_and_min,
+                                  merged_lists$X2)
+casting <- function(output){
+  colnames(output) <- c("the_day","reading","level")
+  layer_form <- dcast(output,the_day ~ reading,function(x){as.character(min(x))},fill="")
+  sleep_id <- paste("night",1:nrow(layer_form),sep = "")
+  layer_form <- cbind(sleep_id, layer_form)
+  return(layer_form)
+}
 
-colnames(layer_graph_output) <- c("the_day","reading","level")
+write.csv(casting(layer_graph_output),"layer_output.csv",row.names = FALSE)
+write.csv(casting(no_stack_output),"layer_no_stack.csv",row.names = FALSE)
 
-layer_form <- dcast(layer_graph_output,the_day ~ reading,function(x){as.character(min(x))},fill="")
-sleep_id <- paste("night",1:nrow(layer_form),sep = "")
-layer_form <- cbind(sleep_id, layer_form)
-
-write.csv(layer_form,"layer_output.csv",row.names = FALSE)
 write.csv(r_and_m,"sleep_days.csv",row.names = FALSE)

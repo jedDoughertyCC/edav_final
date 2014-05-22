@@ -4,7 +4,7 @@
   <head>
     <title>Why Can't I Sleep</title>
 	<link rel="stylesheet" type="text/css" href="sleep_spag.css" />
-    <script type="text/javascript" src="http://media.flowingdata.com/js/jquery-1.4.4.min.js"></script>
+  <script type="text/javascript" src="http://media.flowingdata.com/js/jquery-1.4.4.min.js"></script>
 	<script type="text/javascript" src="http://media.flowingdata.com/js/d3.js?1.29.1"></script>
 	<script type="text/javascript" src="http://media.flowingdata.com/js/d3.time.js?1.29.1"></script>
 	<script type="text/javascript" src="http://media.flowingdata.com/js/d3.csv.js?1.29.1"></script>
@@ -25,7 +25,7 @@
             <a id="nodrinksad">No Prior Booze, Sad</a>
             <a id="smalldrinksad">A Little Booze, Sad</a>
             <a id="muchdrinksad">Tons of Booze, Sad</a>
-            <a id="NAC">Saw a Girl</a>
+            <a id="sawagirl">Saw a Girl (LOL)</a>
         </div><!-- @end #filters -->
 
         <div id="blurb">
@@ -47,9 +47,9 @@
 <script type="text/javascript">
 $(document).ready(function() {
     $('#filters a').click(function() {
-        var countryId = $(this).attr("id");
-        $(this).toggleClass(countryId);
-        showRegion(countryId);
+        var nightId = $(this).attr("id");
+        $(this).toggleClass(nightId);
+        showRegion(nightId);
     });
 
 });

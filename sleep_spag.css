@@ -42,7 +42,7 @@ a { color: #821122; }
 #filters a.nodrinksad { background: #253e96; color: #fff; }
 #filters a.smalldrinksad { background: #25968d; color: #fff; }
 #filters a.muchdrinksad { background: #6E9E75; color: #fff; }
-#filters a.NAC { background: #be1932; color: #fff; }
+#filters a.sawagirl { background: #be1932; color: #fff; }
 
 #vis {
     min-height: 550px;
@@ -68,7 +68,7 @@ path.current, path.highlight.current {
 .nodrinksad.highlight { stroke: #253e96; }
 .smalldrinksad.highlight { stroke: #25968d; }
 .muchdrinksad.highlight { stroke: #6E9E75; }
-.NAC.highlight { stroke: #be1932; }
+.sawagirl.highlight { stroke: #be1932; }
 .highlight { stroke-width: 1.5px; }
 
 line {

@@ -1,14 +1,14 @@
-var regions = { "nodrinkhappy": "No Drinks Woke up Happy" , "smalldrinkhappy": "Had Drinks Woke up happy", "muchdrinkhappy": "Lots of Drinks Woke up happy", "nodrinksad": "No drinks Woke up sad", "smalldrinksad": "Small drinks Woke up sad", "muchdrinksad": "Many Drinks Woke up sad", "NAC": "North America" },
-	w = 925,
-	h = 550,
-	margin = 30,
-	startYear = 1960,
-	endYear = 2610,
-	startAge = 100,
-	endAge = 3000,
-	y = d3.scale.linear().domain([endAge, startAge]).range([0 + margin, h - margin]),
-	x = d3.scale.linear().domain([1960, 2609]).range([0 + margin -5, w]),
-	years = d3.range(startYear, endYear);
+var regions = { "nodrinkhappy": "No Drinks Woke up Happy" , "smalldrinkhappy": "Had Drinks Woke up happy", "muchdrinkhappy": "Lots of Drinks Woke up happy", "nodrinksad": "No drinks Woke up sad", "smalldrinksad": "Small drinks Woke up sad", "muchdrinksad": "Many Drinks Woke up sad", "sawagirl": "Saw A girl" },
+  w = 925,
+  h = 600,
+  margin = 30,
+  startSnap = 0,
+  endSnap = 650,
+  startAge = 100,
+  endAge = 4000,
+  y = d3.scale.linear().domain([endAge, startAge]).range([0 + margin, h - margin]),
+  x = d3.scale.linear().domain([startSnap, endSnap]).range([0 + margin -5, w]),
+  years = d3.range(startSnap, endSnap);
 
 var vis = d3.select("#vis")
     .append("svg:svg")
@@ -22,25 +22,25 @@ var line = d3.svg.line()
     .y(function(d) { return y(d.y); });
 
 
-// Regions
-var countries_regions = {};
+// Evenings
+var sleeps_regions = {};
 d3.text('sleep_days.csv', 'text/csv', function(text) {
     var regions = d3.csv.parseRows(text);
     for (i=1; i < regions.length; i++) {
-        countries_regions[regions[i][0]] = regions[i][1];
+        sleeps_regions[regions[i][0]] = regions[i][1];
     }
 });
 
 
 var startEnd = {},
-    countryCodes = {};
+    sleepCodes = {};
 d3.text('layer_output.csv', 'text/csv', function(text) {
-    var countries = d3.csv.parseRows(text);
+    var sleeps = d3.csv.parseRows(text);
 
-    for (i=1; i < countries.length; i++) {
-        var values = countries[i].slice(2, countries[i.length-1]);
+    for (i=1; i < sleeps.length; i++) {
+        var values = sleeps[i].slice(2, sleeps[i.length-1]);
         var currData = [];
-        countryCodes[countries[i][0]] = countries[i][1];
+        sleepCodes[sleeps[i][0]] = sleeps[i][1];
 
         var started = false;
         for (j=0; j < values.length; j++) {
@@ -48,19 +48,19 @@ d3.text('layer_output.csv', 'text/csv', function(text) {
                 currData.push({ x: years[j], y: values[j] });
 
                 if (!started) {
-                    startEnd[countries[i][0]] = { 'startYear':years[j], 'startVal':values[j] };
+                    startEnd[sleeps[i][0]] = { 'startSnap':years[j], 'startVal':values[j] };
                     started = true;
                 } else if (j == values.length-1) {
-                    startEnd[countries[i][0]]['endYear'] = years[j];
-                    startEnd[countries[i][0]]['endVal'] = values[j];
+                    startEnd[sleeps[i][0]]['endSnap'] = years[j];
+                    startEnd[sleeps[i][0]]['endVal'] = values[j];
                 }
 
             }
         }
         vis.append("svg:path")
             .data([currData])
-            .attr("country", countries[i][0])
-            .attr("class", countries_regions[countries[i][0]])
+            .attr("night", sleeps[i][0])
+            .attr("class", sleeps_regions[sleeps[i][0]])
             .attr("d", line)
             .on("mouseover", onmouseover)
             .on("mouseout", onmouseout);
@@ -75,9 +75,9 @@ vis.append("svg:line")
     .attr("class", "axis")
 
 vis.append("svg:line")
-    .attr("x1", x(startYear))
+    .attr("x1", x(startSnap))
     .attr("y1", y(startAge))
-    .attr("x2", x(startYear))
+    .attr("x2", x(startSnap))
     .attr("y2", y(endAge))
     .attr("class", "axis")
 
@@ -132,12 +132,12 @@ function onmouseover(d, i) {
     d3.select(this)
         .attr("class", currClass + " current");
 
-    var countryCode = $(this).attr("country");
-    var countryVals = startEnd[countryCode];
-    var percentChange = 100 * (countryVals['endVal'] - countryVals['startVal']) / countryVals['startVal'];
+    var sleepCode = $(this).attr("night");
+    var nightVals = startEnd[sleepCode];
+    var percentChange = 100 * (nightVals['endVal'] - nightVals['startVal']) / nightVals['startVal'];
 
-    var blurb = '<h2>' + countryCodes[countryCode] + '</h2>';
-    blurb += "<p>On average: a life expectancy of " + Math.round(countryVals['startVal']) + " years in " + countryVals['startYear'] + " and " + Math.round(countryVals['endVal']) + " years in " + countryVals['endYear'] + ", ";
+    var blurb = '<h2>' + sleepCodes[sleepCode] + '</h2>';
+    blurb += "<p>On average: a life expectancy of " + Math.round(nightVals['startVal']) + " years in " + nightVals['startSnap'] + " and " + Math.round(nightVals['endVal']) + " years in " + nightVals['endSnap'] + ", ";
     if (percentChange >= 0) {
         blurb += "an increase of " + Math.round(percentChange) + " percent."
     } else {
@@ -160,10 +160,10 @@ function onmouseout(d, i) {
 }
 
 function showRegion(regionCode) {
-    var countries = d3.selectAll("path."+regionCode);
-    if (countries.classed('highlight')) {
-        countries.attr("class", regionCode);
+    var sleeps = d3.selectAll("path."+regionCode);
+    if (sleeps.classed('highlight')) {
+        sleeps.attr("class", regionCode);
     } else {
-        countries.classed('highlight', true);
+        sleeps.classed('highlight', true);
     }
 }
