@@ -4,8 +4,8 @@ var regions = { "nodrinkhappy": "No Drinks Woke up Happy" , "smalldrinkhappy": "
   margin = 30,
   startSnap = 0,
   endSnap = 650,
-  startAge = 100,
-  endAge = 4000,
+  startAge = 0,
+  endAge = 100,
   y = d3.scale.linear().domain([endAge, startAge]).range([0 + margin, h - margin]),
   x = d3.scale.linear().domain([startSnap, endSnap]).range([0 + margin -5, w]),
   increments = d3.range(startSnap, endSnap);
@@ -34,7 +34,7 @@ d3.text('sleep_days.csv', 'text/csv', function(text) {
 
 var startEnd = {},
     sleepCodes = {};
-d3.text('layer_output.csv', 'text/csv', function(text) {
+d3.text('layer_no_stack.csv', 'text/csv', function(text) {
     var sleeps = d3.csv.parseRows(text);
 
     for (i=1; i < sleeps.length; i++) {

@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Why Can't I Sleep</title>
+	<link rel="stylesheet" type="text/css" href="sleep_spag.css" />
+  <script type="text/javascript" src="http://media.flowingdata.com/js/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="http://media.flowingdata.com/js/d3.js?1.29.1"></script>
+	<script type="text/javascript" src="http://media.flowingdata.com/js/d3.time.js?1.29.1"></script>
+	<script type="text/javascript" src="http://media.flowingdata.com/js/d3.csv.js?1.29.1"></script>
+
+	<link href='http://fonts.googleapis.com/css?family=Bevan|Cardo' rel='stylesheet' type='text/css'>
+  </head>
+<body>
+<div id="main-wrapper">
+    <div id="content">
+        <h1>Sleep Per Night</h1>
+        <p>I tracked my sleep depth every night for 2 months.
+        Roll over the graph to see a specific night or click a filter to highlight those nights.</p>
+
+        <div id="filters">
+            <a id="nodrinkhappy">No Prior Booze, Happy</a>
+            <a id="smalldrinkhappy">A Little Booze, Happy</a>
+            <a id="muchdrinkhappy">Tons of Booze, Happy</a>
+            <a id="nodrinksad">No Prior Booze, Sad</a>
+            <a id="smalldrinksad">A Little Booze, Sad</a>
+            <a id="muchdrinksad">Tons of Booze, Sad</a>
+            <a id="sawagirl">Saw a Girl (LOL)</a>
+        </div><!-- @end #filters -->
+
+        <div id="blurb">
+            <div id="default-blurb">
+                <h2>All Nights</h2>
+                <p>On average I slept 5:10 hours per night.</p>
+            </div>
+            <div id="blurb-content"></div>
+        </div>
+
+        <div id="vis"></div>
+        <div id="cite">Source: My life; Graphic adapted from <a href="http://flowingdata.com">Nathan Yau</a> by Jed Dougherty</div>
+
+    </div><!-- @end content -->
+</div><!-- @end #main-wrapper -->
+
+<script type="text/javascript" src="sleep_spag_2.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#filters a').click(function() {
+        var nightId = $(this).attr("id");
+        $(this).toggleClass(nightId);
+        showRegion(nightId);
+    });
+
+});
+</script>
+</body>
+</html>
